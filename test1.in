@@ -1,0 +1,33 @@
+program HelloWorld;
+
+var i : int;
+
+void myFunc(param1 : float) [
+    var x : int;
+    {
+        x = 0;
+        do {
+            x = x + 1;
+            print(x);
+        } while (x < 6);
+    }
+];
+
+void myFunc2(param1 : float) [
+    {
+        if (param1 > 2) {
+            print("Greater than");
+        } else {
+            print("Not greater than");
+        };
+    }
+];
+
+main
+{
+    i = 45 * 2 + 1 / 33;
+    myFunc(45)
+    myFunc2(1);
+    print("Hello World!");
+}
+end
