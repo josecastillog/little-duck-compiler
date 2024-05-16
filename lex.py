@@ -1,5 +1,7 @@
 import ply.lex as lex
 import ply.yacc as yacc
+from variables import VariableTable
+from variables import FunctionTable
 
 # Palabras reservadas
 reserved = {
@@ -110,11 +112,12 @@ def p_variables(p):
     """
 
 def p_mas_var(p):
-    """mas_var : variables
+    """mas_var : vars
        | empty"""
 
 def p_list_ids(p):
     "list_ids : ID mas_ids"
+    variableStack.append(p[1])
 
 def p_mas_ids(p):
     """mas_ids : COMMA list_ids
@@ -124,10 +127,18 @@ def p_type(p):
     """type : INT
        | FLOAT
     """
+    global currType
+    currType = p[1]
+    if variableStack and currScope == 'global':
+        for i in variableStack:
+            functionTable[currScope].variables.add_variable(i, p[1])
+        variableStack.clear()
 
 def p_dec_v(p):
     """dec_v : vars
     """
+    global currScope
+    currScope = ''
 
 def p_dec_f(p):
     """dec_f : funcs mas_f
@@ -273,6 +284,11 @@ def p_funcs(p):
     """
     funcs : VOID ID OPEN_PAR params CLOSE_PAR L_BRACKET vars body R_BRACKET SEMI_COLON
     """
+    currScope = p[2]
+    functionTable[currScope] = FunctionTable()
+    for i in variableStack:
+            functionTable[currScope].variables.add_variable(i, currType)
+    variableStack.clear()
 
 def p_params(p):
     """
@@ -293,6 +309,25 @@ def p_empty(p):
 def p_error(p):
     print("Semantic error", p)
 
+# --------------------- Estructuras Auxiliares ---------------------
+
+# variableTable = VariableTable()
+variableStack = []
+
+currScope = 'global'
+currType = ''
+functionTable = {}
+functionTable[currScope] = FunctionTable()
+
+def printFuncVariables():
+    for i, v in functionTable.items():
+        print('Function name:', i)
+        for n, t in v.variables.symbols.items():
+            print(n, t)
+        print()
+
+# ----------------------------- Driver -----------------------------
+
 # Constuir lexer
 lexer = lex.lex()
 
@@ -303,7 +338,7 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test1.in')
+data = read_tests('test2.in')
 lexer.input(data)
 
 # Tokenize
@@ -315,6 +350,7 @@ while True:
 
 # Construir parser
 parser = yacc.yacc(start="programa", debug=True)
-result = parser.parse(data)
-print(data)
-print(result)
+result = parser.parse(data, tracking=True)
+# print(data)
+print()
+printFuncVariables()
