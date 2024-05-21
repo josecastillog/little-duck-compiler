@@ -5,7 +5,6 @@ var hello : float;
 
 void myFunc(param1 : float) [
     var x, y, z : int;
-    var x : float;
     {
         x = 0;
         do {
@@ -22,7 +21,7 @@ void myFunc2(param1 : float) [
         } else {
             print("Not greater than");
         };
-    }
+    };
 ];
 
 void myFunc3() [

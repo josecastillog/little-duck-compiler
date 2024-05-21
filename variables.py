@@ -1,6 +1,9 @@
+from quadruples import QuadrupleGenerator
+
 class FunctionTable:
     def __init__(self):
         self.variables = VariableTable()
+        self.quadruples = QuadrupleGenerator()
 
 class VariableTable:
     def __init__(self):

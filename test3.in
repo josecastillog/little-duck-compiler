@@ -1,0 +1,12 @@
+program HelloWorld;
+
+var i, j, k : int;
+var hello : float;
+
+main
+{
+    i = 45 * 2 + 1 / 33;
+    j = 24 * 3;
+    k = i * j;
+}
+end

@@ -2,6 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 from variables import VariableTable
 from variables import FunctionTable
+from quadruples import QuadrupleGenerator
 
 # Palabras reservadas
 reserved = {
@@ -102,6 +103,7 @@ def t_error(t):
 def p_programa(p):
     """programa : PROGRAM ID SEMI_COLON dec_v dec_f MAIN body END
     """
+    # print('TOP', p[7])
 
 def p_vars(p):
     """vars : VAR variables COLON type SEMI_COLON mas_var
@@ -154,12 +156,20 @@ def p_body(p):
     """
     body : LEFT_CURLY mas_statement RIGHT_CURLY
     """
+    # print(p[2])
+    p[0] = p[2]
 
 def p_mas_statement(p):
     """
     mas_statement : statement mas_statement
     | empty
     """
+    if len(p) > 2:
+        # If mas_statement is non-empty, combine statement and mas_statement
+        p[0] = [p[1]] + p[2]
+    else:
+        # If mas_statement is empty, initialize p[0] to an empty list
+        p[0] = []
 
 def p_statement(p):
     """
@@ -169,16 +179,23 @@ def p_statement(p):
     | f_call
     | print
     """
+    if p[1]:
+        p[0] = p[1]
 
 def p_assign(p):
     """
     assign : ID EQUAL expresion SEMI_COLON
     """
+    p[0] = f"{p[1]} {p[2]} {p[3]}"
+    # print(p[0])
+    functionTable['global'].quadruples.generate(p[0])
+
 
 def p_expresion(p):
     """
     expresion : exp mas_expresion
     """
+    p[0] = p[1] + (p[2] if p[2] else "")
 
 def p_mas_expresion(p):
     """
@@ -187,11 +204,13 @@ def p_mas_expresion(p):
     | NOT_EQUAL exp
     | empty
     """
+    p[0] = p[1] + p[2] if len(p) > 2 else ""
 
 def p_exp(p):
     """
     exp : termino mas_exp
     """
+    p[0] = p[1] + (p[2] if p[2] else "")
 
 def p_mas_exp(p):
     """
@@ -199,11 +218,13 @@ def p_mas_exp(p):
     | SUBTRACT termino
     | empty
     """
+    p[0] = p[1] + p[2] if len(p) > 2 else ""
 
 def p_termino(p):
     """
     termino : factor mas_termino
     """
+    p[0] = p[1] + (p[2] if p[2] else "")
 
 def p_mas_termino(p):
     """
@@ -211,11 +232,13 @@ def p_mas_termino(p):
     | DIVIDE factor
     | empty
     """
+    p[0] = p[1] + p[2] if len(p) > 2 else ""
 
 def p_factor(p):
     """
     factor : mas_factor
     """
+    p[0] = p[1]
 
 def p_mas_factor(p):
     """
@@ -225,6 +248,10 @@ def p_mas_factor(p):
     | ADD cte
     | SUBTRACT cte
     """
+    if len(p) == 4:
+        p[0] = f"({p[2]})"
+    else:
+        p[0] = p[1] + str(p[2]) if len(p) > 2 else p[1]
 
 def p_signo(p):
     """
@@ -232,6 +259,7 @@ def p_signo(p):
     | SUBTRACT
     | empty
     """
+    p[0] = p[1] if p[1] else ""
 
 def p_cte(p):
     """
@@ -239,6 +267,7 @@ def p_cte(p):
     | CTE_FLOAT
     | CTE_INT
     """
+    p[0] = str(p[1])
 
 def p_print(p):
     """
@@ -257,11 +286,16 @@ def p_cycle(p):
     """
     cycle : DO body WHILE OPEN_PAR expresion CLOSE_PAR SEMI_COLON
     """
+    p[0] = f"{p[5]}"
+    # print(p[0])
 
 def p_condition(p):
     """
     condition : IF OPEN_PAR expresion CLOSE_PAR body mas_condition SEMI_COLON
     """
+    p[0] = f"{p[3]}"
+    functionTable['global'].quadruples.generate(p[0])
+    # print(p[0])
 
 def p_mas_condition(p):
     """
@@ -319,6 +353,8 @@ currType = ''
 functionTable = {}
 functionTable[currScope] = FunctionTable()
 
+expresion = ''
+
 def printFuncVariables():
     for i, v in functionTable.items():
         print('Function name:', i)
@@ -338,7 +374,7 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test2.in')
+data = read_tests('test4.in')
 lexer.input(data)
 
 # Tokenize
@@ -351,6 +387,10 @@ while True:
 # Construir parser
 parser = yacc.yacc(start="programa", debug=True)
 result = parser.parse(data, tracking=True)
+# print(functionTable['global'].quadruples.quadruples)
+for i in functionTable['global'].quadruples.quadruples:
+    print(i)
 # print(data)
 print()
-printFuncVariables()
+# printFuncVariables()
+# print(currScope)
