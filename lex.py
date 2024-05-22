@@ -104,6 +104,8 @@ def p_programa(p):
     """programa : PROGRAM ID SEMI_COLON dec_v dec_f MAIN body END
     """
     # print('TOP', p[7])
+    functionTable['global'].expresiones.extend(p[7])
+
 
 def p_vars(p):
     """vars : VAR variables COLON type SEMI_COLON mas_var
@@ -156,9 +158,9 @@ def p_body(p):
     """
     body : LEFT_CURLY mas_statement RIGHT_CURLY
     """
-    # print(p[2])
     p[0] = p[2]
 
+# Esta es la logica mas importante hasta ahora
 def p_mas_statement(p):
     """
     mas_statement : statement mas_statement
@@ -166,7 +168,10 @@ def p_mas_statement(p):
     """
     if len(p) > 2:
         # If mas_statement is non-empty, combine statement and mas_statement
-        p[0] = [p[1]] + p[2]
+        if type(p[1]) != list:
+            p[0] = [p[1]] + p[2]
+        else:
+            p[0] = p[1] + p[2]
     else:
         # If mas_statement is empty, initialize p[0] to an empty list
         p[0] = []
@@ -187,8 +192,6 @@ def p_assign(p):
     assign : ID EQUAL expresion SEMI_COLON
     """
     p[0] = f"{p[1]} {p[2]} {p[3]}"
-    # print(p[0])
-    functionTable['global'].quadruples.generate(p[0])
 
 
 def p_expresion(p):
@@ -293,15 +296,18 @@ def p_condition(p):
     """
     condition : IF OPEN_PAR expresion CLOSE_PAR body mas_condition SEMI_COLON
     """
-    p[0] = f"{p[3]}"
-    functionTable['global'].quadruples.generate(p[0])
-    # print(p[0])
+    if p[6]:
+        p[0] = [p[3]] + ["IF"] + p[5] + ["ELSE"] + p[6] + ["ENDIF"]
+    else:
+        p[0] = [p[3]] + ["IF"] + p[5] + ["ENDIF"]
 
 def p_mas_condition(p):
     """
     mas_condition : ELSE body
     | empty
     """
+    if len(p) > 2:
+        p[0] = p[2]
 
 def p_f_call(p):
     """
@@ -353,7 +359,7 @@ currType = ''
 functionTable = {}
 functionTable[currScope] = FunctionTable()
 
-expresion = ''
+quadrupleG = QuadrupleGenerator()
 
 def printFuncVariables():
     for i, v in functionTable.items():
@@ -374,7 +380,7 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test4.in')
+data = read_tests('test6.in')
 lexer.input(data)
 
 # Tokenize
@@ -387,10 +393,6 @@ while True:
 # Construir parser
 parser = yacc.yacc(start="programa", debug=True)
 result = parser.parse(data, tracking=True)
-# print(functionTable['global'].quadruples.quadruples)
-for i in functionTable['global'].quadruples.quadruples:
-    print(i)
-# print(data)
-print()
-# printFuncVariables()
-# print(currScope)
+
+# Generar cuadruplos de main
+functionTable['global'].generate_quadruples()

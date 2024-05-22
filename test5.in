@@ -6,17 +6,9 @@ main
 {
     if(A+B > C*D) {
         A = B + D;
-        B = A + C;
-        C = D + A;
     } else {
         A = D - C;
-        if (C > 5) {
-            B = 10;
-        };
     };
     B = A * C + D;
-    if (C > 10) {
-        C = 8;
-    };
 }
 end

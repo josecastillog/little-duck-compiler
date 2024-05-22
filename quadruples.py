@@ -1,6 +1,5 @@
 class QuadrupleGenerator:
     def __init__(self): 
-        self.quadruples = []
         self.temp_count = 0
 
     def new_temp(self):
@@ -9,23 +8,34 @@ class QuadrupleGenerator:
 
     def generate(self, expr):
         expr = expr.replace(" ", "")
-        return self.parse_assignment(expr)
+        quadruples = []
+        self.parse_assignment(expr, quadruples)
+        return quadruples
 
-    def parse_assignment(self, expr):
+    def parse_assignment(self, expr, quadruples):
         if '=' in expr:
             var, expr = expr.split('=')
-            result = self.parse_expression(expr)
-            self.quadruples.append(['=', result, '', var])
+            result = self.parse_expression(expr, quadruples)
+            quadruples.append(['=', result, '', var])
         else:
-            return self.parse_expression(expr)
+            return self.parse_expression(expr, quadruples)
 
-    def parse_expression(self, expr):
+    def parse_expression(self, expr, quadruples):
         if '(' in expr:
-            return self.parse_parentheses(expr)
-        else:
-            return self.parse_simple_expr(expr)
+            return self.parse_parentheses(expr, quadruples)
 
-    def parse_parentheses(self, expr):
+        for operators in ['><', '+-', '*/']:
+            result = self.split_at_operator(expr, operators)
+            if result:
+                left, op, right = result
+                left_result = self.parse_expression(left, quadruples)
+                right_result = self.parse_expression(right, quadruples)
+                temp_var = self.new_temp()
+                quadruples.append([op, left_result, right_result, temp_var])
+                return temp_var
+        return expr
+
+    def parse_parentheses(self, expr, quadruples):
         stack = []
         start = None
         for i, char in enumerate(expr):
@@ -37,26 +47,18 @@ class QuadrupleGenerator:
                 start = stack.pop()
                 if not stack:
                     sub_expr = expr[start + 1:i]
-                    temp_var = self.parse_expression(sub_expr)
+                    temp_var = self.parse_expression(sub_expr, quadruples)
                     new_expr = expr[:start] + temp_var + expr[i + 1:]
-                    return self.parse_expression(new_expr)
-        return self.parse_simple_expr(expr)
+                    return self.parse_expression(new_expr, quadruples)
+        return self.parse_expression(expr, quadruples)
 
-    def parse_simple_expr(self, expr):
-        operators = ['+', '-', '*', '/', '>', '<']
-        for op in operators[::-1]:  # Start from the lowest precedence
-            if op in expr:
-                left, right = expr.split(op, 1)
-                left_result = self.parse_expression(left)
-                right_result = self.parse_expression(right)
-                temp_var = self.new_temp()
-                self.quadruples.append([op, left_result, right_result, temp_var])
-                return temp_var
-        return expr
-
-# Example usage
-expression = "x = (A+B)*(C-D) > E"
-generator = QuadrupleGenerator()
-generator.generate(expression)
-for quad in generator.quadruples:
-    print(quad)
+    def split_at_operator(self, expr, operators):
+        depth = 0
+        for i in range(len(expr) - 1, -1, -1):
+            if expr[i] == ')':
+                depth += 1
+            elif expr[i] == '(':
+                depth -= 1
+            elif depth == 0 and expr[i] in operators:
+                return expr[:i], expr[i], expr[i+1:]
+        return None

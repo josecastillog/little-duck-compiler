@@ -1,0 +1,12 @@
+program HelloWorld;
+
+var A, B, C, D : int;
+
+main
+{
+    if(A+B > C*D) {
+        A = B + D;
+    };
+    B = A * C;
+}
+end
