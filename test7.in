@@ -1,0 +1,17 @@
+program HelloWorld;
+
+var A, B, C, D, x : int;
+
+main
+{
+    if(A+B > C*D) {
+        A = B + D;
+    };
+    B = A * C;
+    x = 0;
+    do {
+        x = x + 1;
+        A = 2;
+    } while (x < 6);
+}
+end

@@ -289,8 +289,9 @@ def p_cycle(p):
     """
     cycle : DO body WHILE OPEN_PAR expresion CLOSE_PAR SEMI_COLON
     """
-    p[0] = f"{p[5]}"
-    # print(p[0])
+    # p[0] = f"{p[2] , p[5]}"
+    p[0] = ["DO"] + p[2] + [p[5]] + ["WHILE"]
+    print(p[0])
 
 def p_condition(p):
     """
@@ -380,15 +381,15 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test6.in')
+data = read_tests('test5.in')
 lexer.input(data)
 
 # Tokenize
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
 
 # Construir parser
 parser = yacc.yacc(start="programa", debug=True)

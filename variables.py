@@ -21,6 +21,7 @@ class FunctionTable:
         stack = []
         while self.expresiones:
             exp = self.expresiones.popleft()
+            print(exp)
             if exp == 'IF':
                 self.cuadruplos.append(['gotoF', self.cuadruplos[count-1][-1], '', ''])
                 stack.append(count)
@@ -33,6 +34,13 @@ class FunctionTable:
             elif exp == 'ENDIF':
                 count += 1
                 self.cuadruplos[stack.pop()][3] = str(count)
+            elif exp == 'DO':
+                stack.append(count)
+            elif exp == 'WHILE':
+                print(count)
+                self.print_cuadruplos()
+                self.cuadruplos.append(['gotoV', self.cuadruplos[count-2][-1], '', str(stack.pop())])
+                count += 1
             else:
                 q = generator.generate(exp)
                 self.cuadruplos.extend(q)
