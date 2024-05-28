@@ -1,0 +1,16 @@
+program HelloWorld;
+
+var x : int;
+    y : float;
+
+main
+{
+    x = 0;
+    y = 10;
+    do {
+        x = x + 1;
+        print(x);
+        print("JOSE");
+    } while (x < 6);
+}
+end

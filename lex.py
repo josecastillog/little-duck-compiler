@@ -116,7 +116,7 @@ def p_variables(p):
     """
 
 def p_mas_var(p):
-    """mas_var : vars
+    """mas_var : variables COLON type SEMI_COLON mas_var
        | empty"""
 
 def p_list_ids(p):
@@ -274,9 +274,11 @@ def p_cte(p):
 
 def p_print(p):
     """
-    print : PRINT expresion mas_print SEMI_COLON
-    | PRINT CTE_STRING mas_print
+    print : PRINT OPEN_PAR expresion mas_print CLOSE_PAR SEMI_COLON
+    | PRINT OPEN_PAR CTE_STRING mas_print CLOSE_PAR SEMI_COLON
     """
+    p[0] = ["PRINT"] + [p[3]] + ["ENDPRINT"]
+    print(p[2])
 
 def p_mas_print(p):
     """
@@ -381,7 +383,7 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test5.in')
+data = read_tests('test8.in')
 lexer.input(data)
 
 # Tokenize

@@ -19,9 +19,10 @@ class FunctionTable:
         generator = QuadrupleGenerator()
         count = 0
         stack = []
+        print(self.expresiones)
         while self.expresiones:
             exp = self.expresiones.popleft()
-            print(exp)
+            # print(exp)
             if exp == 'IF':
                 self.cuadruplos.append(['gotoF', self.cuadruplos[count-1][-1], '', ''])
                 stack.append(count)
@@ -37,14 +38,21 @@ class FunctionTable:
             elif exp == 'DO':
                 stack.append(count)
             elif exp == 'WHILE':
-                print(count)
-                self.print_cuadruplos()
                 self.cuadruplos.append(['gotoV', self.cuadruplos[count-2][-1], '', str(stack.pop())])
                 count += 1
+            elif exp == 'ENDPRINT':
+                self.cuadruplos.append(['PRINT', '', '', str(self.cuadruplos[count-1][-1])])
+                count += 1
+            elif exp.startswith('"'):
+                name = exp.strip('"')
+                self.cuadruplos.append(['CTE_STRING', '', '', name])
+                count += 1
             else:
+                # pass
                 q = generator.generate(exp)
                 self.cuadruplos.extend(q)
                 count += len(q)
+        print(self.variables.symbols)
         self.print_cuadruplos()
 
 class VariableTable:
