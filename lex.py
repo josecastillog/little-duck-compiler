@@ -208,7 +208,10 @@ def p_mas_expresion(p):
     | NOT_EQUAL exp
     | empty
     """
-    p[0] = p[1] + p[2] if len(p) > 2 else ""
+    if p[1] == '!=':
+        p[0] = '%' + p[2] if len(p) > 2 else ""
+    else:
+        p[0] = p[1] + p[2] if len(p) > 2 else ""
 
 def p_exp(p):
     """
@@ -418,5 +421,5 @@ def run(code):
     return m.output
 
 if __name__ == "__main__":
-    data = read_tests('test10.in')
+    data = read_tests('test11.in')
     run(data)

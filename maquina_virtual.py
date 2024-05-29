@@ -82,6 +82,16 @@ class MaquinaVirtual:
                 elif type(v1) == str and type(v2) == str:
                     self.memoria[r] = float(v1) > float(v2)
                 i += 1
+            elif op == '%':
+                if type(v1) == int and type(v2) == str:
+                    self.memoria[r] = self.memoria[v1] != float(v2)
+                elif type(v1) == str and type(v2) == int:
+                    self.memoria[r] = float(v1) != self.memoria[v2]
+                elif type(v1) == int and type(v2) == int:
+                    self.memoria[r] = self.memoria[v1] != self.memoria[v2]
+                elif type(v1) == str and type(v2) == str:
+                    self.memoria[r] = float(v1) != float(v2)
+                i += 1
             elif op == 'gotoV':
                 if self.memoria[v1]:
                     i = int(r)-1

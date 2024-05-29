@@ -18,7 +18,7 @@ class FunctionTable:
     def starts_with_non_num_or_at(self, s):
         reserved = ['=', '+', '-', '*', '/', 'IF', 'ELSE', 
                     'ENDIF', 'DO', 'WHILE', 'ENDPRINT', 'gotoF', 'VAR_PRINT',
-                    'gotoV', 'goto', 'CTE_STRING', 'PRINT', '<', '>', '!=']
+                    'gotoV', 'goto', 'CTE_STRING', 'PRINT', '<', '>', '%']
         if s in reserved or not s or s[0] == '"':
             return False
         first_char = s[0]

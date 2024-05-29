@@ -1,0 +1,13 @@
+program HelloWorld;
+
+var x : int;
+    y : float;
+
+main
+{
+    x = 5;
+    if(x != 5) {
+        print("NOT 5");
+    };
+}
+end

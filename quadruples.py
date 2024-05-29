@@ -27,7 +27,7 @@ class QuadrupleGenerator:
         if '(' in expr:
             return self.parse_parentheses(expr, quadruples)
 
-        for operators in ['><', '+-', '*/']:
+        for operators in ['%><', '+-', '*/']:
             result = self.split_at_operator(expr, operators)
             if result:
                 left, op, right = result
