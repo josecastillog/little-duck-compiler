@@ -278,7 +278,10 @@ def p_print(p):
     print : PRINT OPEN_PAR expresion mas_print CLOSE_PAR SEMI_COLON
     | PRINT OPEN_PAR CTE_STRING mas_print CLOSE_PAR SEMI_COLON
     """
-    p[0] = ["PRINT"] + [p[3]] + ["ENDPRINT"]
+    if p[4]:
+        p[0] = ["PRINT"] + [p[3]] + ["ENDPRINT"] + p[4]
+    else:
+        p[0] = ["PRINT"] + [p[3]] + ["ENDPRINT"]
 
 def p_mas_print(p):
     """
@@ -286,6 +289,13 @@ def p_mas_print(p):
     | CTE_STRING mas_print
     | empty
     """
+    if len(p) > 2:
+        if p[3]:
+            p[0] = ["PRINT"] + [p[2]] + ["ENDPRINT"] + p[3]
+        else:
+            p[0] = ["PRINT"] + [p[2]] + ["ENDPRINT"]
+    elif len(p) < 2:
+        p[0] = ["PRINT"] + [p[1]] + ["ENDPRINT"] + p[2]
 
 def p_cycle(p):
     """
@@ -408,5 +418,5 @@ def run(code):
     return m.output
 
 if __name__ == "__main__":
-    data = read_tests('test9.in')
+    data = read_tests('test10.in')
     run(data)

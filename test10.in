@@ -1,0 +1,11 @@
+program HelloWorld;
+
+var x : int;
+    y : float;
+
+main
+{
+    x = 22;
+    print("Joe is", x);
+}
+end
