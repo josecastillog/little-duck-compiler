@@ -1,0 +1,24 @@
+program HelloWorld;
+
+var x : int;
+    y : float;
+
+main
+{
+    x = 0;
+    y = 2.3;
+    do {
+        x = x + 1;
+        if (x < 6) {
+            print("Less than 5:", x);
+        } else {
+            if (x > 9) {
+                if (x < 11) {
+                    print("EXACTLY 10");
+                };
+            };
+            print("More than 5:", x);
+        };
+    } while (x < 11);
+}
+end

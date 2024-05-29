@@ -67,6 +67,7 @@ class FunctionTable:
                 self.cuadruplos.extend(q)
                 count += len(q)
         self.translate_to_address()
+        self.print_cuadruplos()
 
 class VariableTable:
     def __init__(self):
@@ -75,6 +76,10 @@ class VariableTable:
         self.global_int_count = 0
         self.global_float_count = 0
         self.temp_count = 0
+    
+    def print_expresiones(self):
+        for i, c in self.symbols.items():
+            print(f"{i+1}. {c}")
 
     def add_variable(self, name, data_type):
         if name in self.symbols:
