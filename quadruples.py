@@ -4,7 +4,7 @@ class QuadrupleGenerator:
 
     def new_temp(self):
         self.temp_count += 1
-        return f't{self.temp_count}'
+        return f'@{self.temp_count}'
 
     def generate(self, expr):
         expr = expr.replace(" ", "")
@@ -21,6 +21,9 @@ class QuadrupleGenerator:
             return self.parse_expression(expr, quadruples)
 
     def parse_expression(self, expr, quadruples):
+        if self.is_constant(expr):
+            return expr
+
         if '(' in expr:
             return self.parse_parentheses(expr, quadruples)
 
@@ -62,3 +65,10 @@ class QuadrupleGenerator:
             elif depth == 0 and expr[i] in operators:
                 return expr[:i], expr[i], expr[i+1:]
         return None
+    
+    def is_constant(self, expr):
+        try:
+            float(expr)
+            return True
+        except ValueError:
+            return False

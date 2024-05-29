@@ -6,11 +6,17 @@ var x : int;
 main
 {
     x = 0;
-    y = 10;
+    y = -1.5;
+    if (y > -2) {
+        print("SI");
+    } else {
+        print(y);
+    };
     do {
         x = x + 1;
-        print(x);
-        print("JOSE");
+        print(x+1);
+        print("Hello World!");
     } while (x < 6);
+    print(x);
 }
 end

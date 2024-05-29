@@ -3,6 +3,7 @@ import ply.yacc as yacc
 from variables import VariableTable
 from variables import FunctionTable
 from quadruples import QuadrupleGenerator
+from maquina_virtual import MaquinaVirtual
 
 # Palabras reservadas
 reserved = {
@@ -278,7 +279,6 @@ def p_print(p):
     | PRINT OPEN_PAR CTE_STRING mas_print CLOSE_PAR SEMI_COLON
     """
     p[0] = ["PRINT"] + [p[3]] + ["ENDPRINT"]
-    print(p[2])
 
 def p_mas_print(p):
     """
@@ -291,9 +291,7 @@ def p_cycle(p):
     """
     cycle : DO body WHILE OPEN_PAR expresion CLOSE_PAR SEMI_COLON
     """
-    # p[0] = f"{p[2] , p[5]}"
     p[0] = ["DO"] + p[2] + [p[5]] + ["WHILE"]
-    print(p[0])
 
 def p_condition(p):
     """
@@ -371,11 +369,6 @@ def printFuncVariables():
             print(n, t)
         print()
 
-# ----------------------------- Driver -----------------------------
-
-# Constuir lexer
-lexer = lex.lex()
-
 # Archivos de input
 def read_tests(file):
     with open(file, 'r') as file:
@@ -383,19 +376,36 @@ def read_tests(file):
 
     return file_contents
 
-data = read_tests('test8.in')
-lexer.input(data)
+# ----------------------------- Driver -----------------------------
 
-# Tokenize
-# while True:
-#     tok = lexer.token()
-#     if not tok:
-#         break
-#     print(tok)
+def run(code):
 
-# Construir parser
-parser = yacc.yacc(start="programa", debug=True)
-result = parser.parse(data, tracking=True)
 
-# Generar cuadruplos de main
-functionTable['global'].generate_quadruples()
+    # Constuir lexer
+    lexer = lex.lex()
+    lexer.input(code)
+
+    # Tokenize
+    # while True:
+    #     tok = lexer.token()
+    #     if not tok:
+    #         break
+    #     print(tok)
+
+    # Construir parser
+    parser = yacc.yacc(start="programa", debug=True)
+    result = parser.parse(code, tracking=True)
+
+    # Generar cuadruplos de main
+    functionTable['global'].generate_quadruples()
+    # functionTable['global'].print_cuadruplos()
+
+    # Correr maquina virtual
+    m = MaquinaVirtual(functionTable['global'].cuadruplos, functionTable['global'].variables.symbols)
+    m.main()
+
+    return m.output
+
+if __name__ == "__main__":
+    data = read_tests('test8.in')
+    run(data)
