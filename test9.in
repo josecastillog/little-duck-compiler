@@ -1,0 +1,21 @@
+program HelloWorld;
+
+var x : int;
+    y : float;
+
+main
+{
+    x = 0;
+    do {
+        x = x + 1;
+        if (x < 10) {
+            print("Less than 10");
+        } else {
+            print("More than 10");
+            if (x < 12) {
+                print(x);
+            };
+        };
+    } while (x < 25);
+}
+end

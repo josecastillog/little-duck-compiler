@@ -349,6 +349,7 @@ def p_empty(p):
 
 def p_error(p):
     print("Semantic error", p)
+    raise KeyError(f"Semantic error '{p}'")
 
 # --------------------- Estructuras Auxiliares ---------------------
 
@@ -407,5 +408,5 @@ def run(code):
     return m.output
 
 if __name__ == "__main__":
-    data = read_tests('test8.in')
+    data = read_tests('test9.in')
     run(data)

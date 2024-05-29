@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Editor</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/editor/editor.main.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+      }
+      .container {
+        display: flex;
+        width: 100%;
+      }
+      #editor {
+        width: 50%;
+        height: 100%;
+      }
+      .output-container {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        box-sizing: border-box;
+        font-size: 18px;
+      }
+      button {
+        height: 40px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      #output {
+        flex: 1;
+        padding: 10px;
+        white-space: pre-wrap;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="editor"></div>
+      <div class="output-container">
+        <button onclick="runCode()">Run Code</button>
+        <div id="output">Output will be displayed here...</div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/loader.js"></script>
+    <script>
+      var editor;
+      require.config({
+        paths: {
+          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs",
+        },
+      });
+      require(["vs/editor/editor.main"], function () {
+        editor = monaco.editor.create(document.getElementById("editor"), {
+          value: "",
+          language: "python",
+          theme: "vs-dark",
+          fontSize: 18, // Set the font size here
+          automaticLayout: true,
+        });
+      });
+
+      async function runCode() {
+        const code = editor.getValue();
+        const response = await fetch("/run_code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code: code }),
+        });
+        const result = await response.json();
+        document.getElementById("output").textContent = result.output;
+      }
+    </script>
+  </body>
+</html>
