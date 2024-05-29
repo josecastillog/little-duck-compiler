@@ -4,6 +4,10 @@ class MaquinaVirtual:
         self.memoria = memoria
         self.output = []
     
+    def fix_type(self, address):
+        if address in range(1000, 2000):
+            self.memoria[address] = int(self.memoria[address])
+    
     def main(self):
         i = 0
         while i < len(self.cuadruplos):
@@ -14,6 +18,7 @@ class MaquinaVirtual:
                 else:
                     self.memoria[r] = float(v1)
                 i += 1
+                self.fix_type(r)
             elif op == '+':
                 if type(v1) == int and type(v2) == str:
                     self.memoria[r] = self.memoria[v1] + float(v2)
