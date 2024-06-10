@@ -18,7 +18,7 @@ class FunctionTable:
     def starts_with_non_num_or_at(self, s):
         reserved = ['=', '+', '-', '*', '/', 'IF', 'ELSE', 
                     'ENDIF', 'DO', 'WHILE', 'ENDPRINT', 'gotoF', 'VAR_PRINT',
-                    'gotoV', 'goto', 'CTE_STRING', 'PRINT', '<', '>', '%']
+                    'gotoV', 'goto', 'CTE_STRING', 'PRINT', '<', '>', '%' , 'WHILE2', 'ENDWHILE', 'gotoW']
         if s in reserved or not s or s[0] == '"':
             return False
         first_char = s[0]
@@ -61,6 +61,16 @@ class FunctionTable:
                 count += 1
             elif exp in self.variables.symbols_map:
                 self.cuadruplos.append(['VAR_PRINT', '', '', str(exp)])
+                count += 1
+            elif exp == 'WHILE2':
+                self.cuadruplos.append(['gotoF', self.cuadruplos[count-1][-1], '', ''])
+                stack.append(count)
+                count += 1
+            elif exp == 'ENDWHILE':
+                temp = stack.pop()
+                self.cuadruplos.append(['goto', '', '', str(temp)])
+                self.cuadruplos[temp][-1] = str(count + 2)
+                # self.cuadruplos[temp][3] = str(count + 1
                 count += 1
             else:
                 q = generator.generate(exp)

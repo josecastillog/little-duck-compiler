@@ -45,7 +45,7 @@ tokens = [
    'EQUAL',
    'CTE_STRING',
    'CTE_FLOAT',
-   'CTE_INT', 
+   'CTE_INT',
 ] + list(reserved.values())
 
 # Define reglas para cada token
@@ -303,8 +303,13 @@ def p_mas_print(p):
 def p_cycle(p):
     """
     cycle : DO body WHILE OPEN_PAR expresion CLOSE_PAR SEMI_COLON
+    | WHILE OPEN_PAR expresion CLOSE_PAR body SEMI_COLON
     """
-    p[0] = ["DO"] + p[2] + [p[5]] + ["WHILE"]
+    if len(p) == 8:
+        p[0] = ["DO"] + p[2] + [p[5]] + ["WHILE"]
+    else:
+        p[0] =  [p[3]] + ["WHILE2"] + p[5] + ["ENDWHILE"]
+        print(p[0])
 
 def p_condition(p):
     """
@@ -421,5 +426,5 @@ def run(code):
     return m.output
 
 if __name__ == "__main__":
-    data = read_tests('test11.in')
+    data = read_tests('test16.in')
     run(data)

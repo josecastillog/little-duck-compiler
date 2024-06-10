@@ -1,0 +1,15 @@
+program HelloWorld;
+
+var x, i, res : int;
+
+main
+{
+    x = 5;
+    res = 1;
+    do {
+        res = res * x;
+        x = x - 1;
+    } while(x > 0);
+    print(res);
+}
+end

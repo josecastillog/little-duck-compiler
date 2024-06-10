@@ -1,0 +1,20 @@
+program HelloWorld;
+
+var a, b, count, terms, nth : int;
+
+main
+{
+    terms = 7;
+    a = 0;
+    b = 1;
+    count = 0;
+    print(a);
+    do {
+        nth = a + b;
+        a = b;
+        b = nth;
+        count = count + 1;
+        print(a);
+    } while(count < terms-1);
+}
+end

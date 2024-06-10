@@ -45,6 +45,8 @@ class MaquinaVirtual:
                 elif type(v1) == str and type(v2) == int:
                     self.memoria[r] = float(v1) * self.memoria[v2]
                 elif type(v1) == int and type(v2) == int:
+                    # print(self.memoria[v1])
+                    # print(self.memoria[v2])
                     self.memoria[r] = self.memoria[v1] * self.memoria[v2]
                 elif type(v1) == str and type(v2) == str:
                     self.memoria[r] = float(v1) * float(v2)
@@ -107,6 +109,12 @@ class MaquinaVirtual:
                     i = int(r)-1
                     continue
                 i += 1
+            elif op == 'gotoW':
+                if self.memoria[v1]:
+                    i += 1
+                    continue
+                else:
+                    i = self.memoria[r]
             elif op == 'goto':
                 i = int(r)-1
             elif op == 'CTE_STRING' or 'VAR_PRINT':
